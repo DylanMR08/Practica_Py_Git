@@ -1,12 +1,13 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+load_dotenv(".env")
 
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:@localhost/practica_py"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+url: str = f"mysql+pymysql://{os.getenv('DB_USERNAME')}:@{os.getenv('DB_HOST')}/{os.getenv('DB_DATABASE')}"
+engine = create_engine(url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 def get_db():
