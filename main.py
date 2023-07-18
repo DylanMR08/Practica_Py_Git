@@ -1,6 +1,6 @@
-from models import Base
-from database import engine
-from models import Persona, Gatito
+from models.models import Base
+from database.database import engine
+from models.models import Persona, Gatito
 from pydantic import BaseModel, validator
 from sqlalchemy.orm import Session
 
