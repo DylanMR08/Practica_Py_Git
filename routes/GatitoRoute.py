@@ -3,6 +3,7 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 from database.database import get_db
 from services.GatitoService import GatitoService
+from schemas.GatitoSchema import GatitoValidator
 DBSession = Annotated[Session, Depends(get_db)]
 
 gatitoRoute = APIRouter(prefix="/gatito", tags=["Gatitos"])

@@ -2,6 +2,7 @@
 from models.models import Gatito
 from sqlalchemy.orm import Session
 from typing import List
+from schemas.GatitoSchema import GatitoValidator
 
 
 class GatitoService:
@@ -30,12 +31,12 @@ class GatitoService:
         return False
     
     @classmethod
-    def create(self, gatito:GatitoValidator, db:Session) -> List[Gatito]:
+    def create(self, gatito:GatitoValidator, db:Session) -> bool:
         try:
            gatito = Gatito(**gatito.model_dump())
            db.add(gatito)
            db.commit()
-
+           return True
 
         except Exception as e:
 
@@ -44,13 +45,14 @@ class GatitoService:
         return False
     
     @classmethod
-    def update(self, gatito:GatitoValidator, db:Session) -> List[Gatito]:
+    def update(self, gatito:GatitoValidator, db:Session) -> bool:
         try:
-           gatito = db.query(gatito).get()
-           db.add(gatito)
+           gatitos = db.query(Gatito).get(gatito.id)
+           gatitos.name = gatito.name
+           gatitos.raza = gatito.raza
            db.commit()
-           
-
+           db.refresh(gatitos)
+           return True
         except Exception as e:
 
             db.rollback()
