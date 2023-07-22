@@ -10,6 +10,8 @@ from routes.GatitoRoute import gatitoRoute
 app = FastAPI()
 
 app.include_router(router=gatitoRoute, prefix="/api")
+app.include_router(router=personRoute, prefix="/api")
+
 
 @app.get("/")
 async def index() -> JSONResponse:
