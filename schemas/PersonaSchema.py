@@ -5,3 +5,4 @@ class PersonaValidator(BaseModel):
     name: str
     lastname: str
     email: EmailStr
+    password: str

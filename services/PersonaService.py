@@ -1,9 +1,12 @@
 from models.models import Persona
 from sqlalchemy.orm import Session
+from passlib.context import CryptContext
 from schemas.PersonaSchema import PersonaValidator
 from typing import List
 
 class PersonaService:
+
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     @classmethod
     def get_all(self, db: Session) -> List[Persona]:
@@ -32,6 +35,7 @@ class PersonaService:
     def create(self, person: PersonaValidator, db: Session) -> bool:
         try:
             persona = Persona(**person.model_dump())
+            persona.password = self.pwd_context.hash(persona.password)
             db.add(persona)
             db.commit()
             return True
