@@ -1,35 +1,44 @@
 from typing import Annotated, List
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from database.database import get_db
 from services.GatitoService import GatitoService
 from schemas.GatitoSchema import GatitoValidator
 from schemas.RelationshipSchema import GatitoResponse
 DBSession = Annotated[Session, Depends(get_db)]
+tokenDependency = Depends()
 
-gatitoRoute = APIRouter(prefix="/gatito", tags=["Gatitos"])
+gatitoRoute = APIRouter(prefix="/gatito", tags=["Gatitos"], dependencies=[Depends()])
 
 @gatitoRoute.get("/")
 async def index(dbCom: DBSession) -> List[GatitoResponse]:
     response = GatitoService.get_all(db=dbCom)
-    return response
+    if response: 
+        return response
+    raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No existen registro")
 
 @gatitoRoute.get("/{id}")
 async def getById(id:int, dbCom: DBSession) -> GatitoResponse:
     response = GatitoService.get_by_id(id=id, db=dbCom)
-    return response
+    if response:
+        return response
+    raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="No existe un registro con ese id")
 
 @gatitoRoute.delete("/{id}")
 async def delete(id:int, dbCom: DBSession):
-    response = GatitoService.delete(id=id, db=dbCom)
-    return "Gatito Eliminado" if response is True else "Error al eliminar"
+    if  GatitoService.delete(id=id, db=dbCom):
+        return JSONResponse("Gatito Eliminada", status.HTTP_200_OK)
+    raise HTTPException(status.HTTP_400_BAD_REQUEST, detail=f"No existe un gatito con id {id}")
 
 @gatitoRoute.post("/")
 async def create(gatito: GatitoValidator, dbCom: DBSession):
-    response = GatitoService.create(gatito=gatito, db=dbCom)
-    return "Gatito Agregado" if response is True else "Error al agregar"
+    if GatitoService.create(gatito=gatito, db=dbCom):
+        return JSONResponse("Gatito Agrgedo", status.HTTP_200_OK)
+    raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Error al agregar")
 
 @gatitoRoute.put("/")
 async def update(gatito: GatitoValidator, dbCom: DBSession):
-    response = GatitoService.update(gatito=gatito, db=dbCom)
-    return "Gatito actualizado" if response is True else "Error al actualizar"
+    if GatitoService.update(gatito=gatito, db=dbCom):
+         return JSONResponse("Gatito MOdificado", status.HTTP_200_OK)
+    raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="Error al modificar")
