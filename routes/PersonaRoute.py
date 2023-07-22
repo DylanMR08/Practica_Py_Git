@@ -34,7 +34,7 @@ async def delete(id: int, dbConn: DBSession):
         return JSONResponse("Persona eliminada existosamente", status.HTTP_200_ACCEPTED)
     raise HTTPException(status.HTTP_400_BAD_REQUEST, f"Error al eliminar persona con id {id}")
 
-@personRoute.post("/", dependencies=[tokenDependency])
+@personRoute.post("/")
 async def create(persona: PersonaValidator, dbConn: DBSession):
     if PersonaService.create(person=persona, db=dbConn):
         return JSONResponse("Persona agregada existosamente", status.HTTP_200_ACCEPTED)
