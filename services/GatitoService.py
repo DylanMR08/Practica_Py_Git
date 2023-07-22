@@ -9,6 +9,7 @@ class GatitoService:
     @classmethod
     def get_all(self, db:Session) -> List[Gatito]:
         values = db.query(Gatito).all()
+        print(values)
         return [gato for gato in values]
 
     @classmethod
