@@ -11,6 +11,7 @@ class Persona(Base):
     name: Mapped[str] = mapped_column(String(30), unique=True)
     lastname: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(50), unique=True)
+    password: Mapped[str] = mapped_column(String(256))
 
     gatitos: Mapped[List["Gatito"]] = relationship(back_populates="owner")
 
@@ -18,6 +19,7 @@ class Persona(Base):
         self.name = kwargs.get("name")
         self.lastname = kwargs.get("lastname")
         self.email = kwargs.get("email")
+        self.password = kwargs.get("password")
         
     def __repr__(self) -> str:
         return f"User: <Id: {self.id}, name: {self.name}>"
