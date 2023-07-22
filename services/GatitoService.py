@@ -8,24 +8,23 @@ from schemas.GatitoSchema import GatitoValidator
 class GatitoService:
     @classmethod
     def get_all(self, db:Session) -> List[Gatito]:
-        values = db.query().all()
+        values = db.query(Gatito).all()
         return [gato for gato in values]
 
     @classmethod
-    def get_by_id(self, id:int, db:Session) -> bool:
-        values = db.query(Gatito).get(id)
-        return [gato for gato in values]
+    def get_by_id(self, id:int, db:Session) -> Gatito:
+        value = db.query(Gatito).get(id)
+        return value
 
     @classmethod
-    def delete(self, id:int, db:Session) -> List[Gatito]:
+    def delete(self, id:int, db:Session) -> bool:
         try:
             values = db.query(Gatito).get(id)
             if values is not None:
                 db.delete(values)
                 db.commit()
-            return False
+                return True
         except Exception as e:
-
             db.rollback()
             print(e)
         return False
@@ -37,9 +36,7 @@ class GatitoService:
            db.add(gatito)
            db.commit()
            return True
-
         except Exception as e:
-
             db.rollback()
             print(e)
         return False
